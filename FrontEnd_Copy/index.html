@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Athlete Ages - Deadspin</title>
+    <script type="text/javascript" src="d3/d3.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+    
+<body>
+    
+<!--Div that holds input field, button, and text. All other elements generated in D3--> 
+<div id="intro"><span id="introtext">Enter your birthday:</span></div>
+<div id="calculator">
+    <form>
+        <input type="date" name="inputbox" value="1985-01-01" >
+        <button type="button" onClick="record(this.form)">Submit</button>
+    </form>  
+    <p>You are older than:</p>
+        <ul>
+            <li><span id='nflpercent'>*</span> percent of NFL players</li>
+            <li><span id='nbapercent'>*</span> percent of NBA players</li>
+            <li><span id='nhlpercent'>*</span> percent of NHL players</li>
+            <li><span id='mlbpercent'>*</span> percent of MLB players</li>
+        </ul>     
+</div>
+    
+<script type="text/javascript">
+
+//data values for histograms
+var nfldataset=            [{ age: 15, value: 0 },	
+							{ age: 16, value: 0 },		
+							{ age: 17, value: 0 },
+							{ age: 18, value: 0 },
+							{ age: 19, value: 0 },
+							{ age: 20, value: 0 },
+							{ age: 21, value: 0.003420265 },
+							{ age: 22, value: 0.035057717 },
+							{ age: 23, value: 0.109020949 },
+							{ age: 24, value: 0.180418982 },
+							{ age: 25, value: 0.153484395 },
+							{ age: 26, value: 0.123129543 },
+							{ age: 27, value: 0.095339889 },
+							{ age: 28, value: 0.076955964 },
+							{ age: 29, value: 0.062847371 },
+							{ age: 30, value: 0.048311244 },
+							{ age: 31, value: 0.035912783 },
+							{ age: 32, value: 0.02864472 },
+							{ age: 33, value: 0.018383925 },
+							{ age: 34, value: 0.008978196 },
+                            { age: 35, value: 0.00812313 },
+                            { age: 36, value: 0.003420265 },
+                            { age: 37, value: 0.003420265 },
+                            { age: 38, value: 0.002565199 },
+                            { age: 39, value: 0.001282599 },
+                            { age: 40, value: 0.000427533 },
+                            { age: 41, value: 0.000855066 },
+                            { age: 42, value: 0 },
+                            { age: 43, value: 0 },
+                            { age: 44, value: 0 },
+                            { age: 45, value: 0 }];
+    
+var nbadataset=            [{ age: 15, value: 0 },	
+							{ age: 16, value: 0 },		
+							{ age: 17, value: 0 },
+							{ age: 18, value: 0 },
+							{ age: 19, value: 0.003552398 },
+							{ age: 20, value: 0.014209591 },
+							{ age: 21, value: 0.042628774 },
+							{ age: 22, value: 0.060390764 },
+							{ age: 23, value: 0.090586146 },
+							{ age: 24, value: 0.090586146 },
+							{ age: 25, value: 0.115452931 },
+							{ age: 26, value: 0.094138544 },
+							{ age: 27, value: 0.076376554 },
+							{ age: 28, value: 0.087033748 },
+							{ age: 29, value: 0.062166963 },
+							{ age: 30, value: 0.046181172 },
+							{ age: 31, value: 0.04973357 },
+							{ age: 32, value: 0.03374778 },
+							{ age: 33, value: 0.039076377 },
+							{ age: 34, value: 0.037300178 },
+                            { age: 35, value: 0.019538188 },
+                            { age: 36, value: 0.017761989 },
+                            { age: 37, value: 0.007104796 },
+                            { age: 38, value: 0.007104796 },
+                            { age: 39, value: 0.003552398 },
+                            { age: 40, value: 0.001776199 },
+                            { age: 41, value: 0 },
+                            { age: 42, value: 0 },
+                            { age: 43, value: 0 },
+                            { age: 44, value: 0 },
+                            { age: 45, value: 0 }];
+    
+var mlbdataset=            [{ age: 15, value: 0 },	
+							{ age: 16, value: 0 },		
+							{ age: 17, value: 0 },
+							{ age: 18, value: 0 },
+							{ age: 19, value: 0 },
+							{ age: 20, value: 0.001124859 },
+							{ age: 21, value: 0.003374578 },
+							{ age: 22, value: 0.021372328 },
+							{ age: 23, value: 0.043869516 },
+							{ age: 24, value: 0.073115861 },
+							{ age: 25, value: 0.088863892 },
+							{ age: 26, value: 0.100112486 },
+							{ age: 27, value: 0.120359955 },
+							{ age: 28, value: 0.101237345 },
+							{ age: 29, value: 0.089988751 },
+							{ age: 30, value: 0.082114736 },
+							{ age: 31, value: 0.069741282 },
+							{ age: 32, value: 0.046119235 },
+							{ age: 33, value: 0.044994376 },
+							{ age: 34, value: 0.024746907 },
+                            { age: 35, value: 0.026996625 },
+                            { age: 36, value: 0.01912261 },
+                            { age: 37, value: 0.014623172 },
+                            { age: 38, value: 0.013498313 },
+                            { age: 39, value: 0.007874016 },
+                            { age: 40, value: 0.003374578 },
+                            { age: 41, value: 0.002249719 },
+                            { age: 42, value: 0 },
+                            { age: 43, value: 0.001124859 },
+                            { age: 44, value: 0 },
+                            { age: 45, value: 0 }];
+    
+var nhldataset=            [{ age: 15, value: 0 },	
+							{ age: 16, value: 0 },		
+							{ age: 17, value: 0 },
+							{ age: 18, value: 0.002034588 },
+							{ age: 19, value: 0.011190234 },
+							{ age: 20, value: 0.03051882 },
+							{ age: 21, value: 0.052899288 },
+							{ age: 22, value: 0.070193286 },
+							{ age: 23, value: 0.100712106 },
+							{ age: 24, value: 0.08646999 },
+							{ age: 25, value: 0.072227874 },
+							{ age: 26, value: 0.078331638 },
+							{ age: 27, value: 0.078331638 },
+							{ age: 28, value: 0.064089522 },
+							{ age: 29, value: 0.06612411 },
+							{ age: 30, value: 0.073245168 },
+							{ age: 31, value: 0.04577823 },
+							{ age: 32, value: 0.04069176 },
+							{ age: 33, value: 0.032553408 },
+							{ age: 34, value: 0.021363174 },
+                            { age: 35, value: 0.02543235 },
+                            { age: 36, value: 0.012207528 },
+                            { age: 37, value: 0.016276704 },
+                            { age: 38, value: 0.006103764 },
+                            { age: 39, value: 0.00508647 },
+                            { age: 40, value: 0.002034588 },
+                            { age: 41, value: 0.004069176 },
+                            { age: 42, value: 0.001017294 },
+                            { age: 43, value: 0.001017294 },
+                            { age: 44, value: 0 },
+                            { age: 45, value: 0 }];
+
+//data values for individual player birthdays, imported from .csv 
+var nfl = [];    
+var nba = [];
+var mlb = [];
+var nhl = [];    
+d3.csv("nfl.csv", function(data) {nfl = data;});
+d3.csv("nba.csv", function(data) {nba = data;});
+d3.csv("mlb.csv", function(data) {mlb = data;});
+d3.csv("nhl.csv", function(data) {nhl = data;});   
+    
+//set scales and svg widths for D3
+var w = 175;
+var h = 175;
+var padding = 7;
+        
+var xScale = d3.scale.linear()
+        .domain([15,45])
+        .range([padding*1.2,w-padding*1.2]);
+        
+var yScale = d3.scale.linear()
+        .domain([0, 0.185])
+        .range([0, h-padding-22]);
+    
+var xAxis = d3.svg.axis()
+        .scale(xScale)
+        .orient("bottom")
+        .ticks(7)
+        .tickSize(3);
+    
+//generate svgs for graphs
+var nflsvg = d3.select("body")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h)
+        .attr("id","nflsvg");
+    
+var nbasvg = d3.select("body")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h)
+        .attr("id","nbasvg");
+    
+var mlbsvg = d3.select("body")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h)
+        .attr("id","mlbsvg");
+    
+var nhlsvg = d3.select("body")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h)
+        .attr("id","nhlsvg");
+
+    
+//generate rects, axes, labels, and titles for NFL    
+    nflsvg.selectAll("rect")
+        .data(nfldataset)
+        .enter()
+        .append("rect")
+        .attr("x",function(d){return xScale(d.age);})
+        .attr("y",function(d){return (h-padding)-22 - yScale(d.value);})
+        .attr("width",(w)/nfldataset.length)
+        .attr("height",function(d){return yScale(d.value);})
+        .attr("fill","rgb(245,94,80)");
+    
+    nflsvg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + (h-padding-22) + ")")
+        .call(xAxis);
+    nflsvg.append("text")
+        .attr("x", 87 )
+        .attr("y", 170)
+        .style("text-anchor", "middle")
+        .text("Age");
+    nflsvg.append("text")
+        .attr("x", 5 )
+        .attr("y", 20)
+        .attr("id","title")
+        .style("text-anchor", "left")
+        .text("NFL");
+    
+//generate rects, axes, labels, and titles for NBA   
+    nbasvg.selectAll("rect")
+        .data(nbadataset)
+        .enter()
+        .append("rect")
+        .attr("x",function(d){return xScale(d.age);})
+        .attr("y",function(d){return (h-padding)-22 - yScale(d.value);})
+        .attr("width",(w)/nbadataset.length)
+        .attr("height",function(d){return yScale(d.value);})
+        .attr("fill","rgb(82,167,220)");
+    
+    nbasvg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + (h-padding-22) + ")")
+        .call(xAxis);
+    nbasvg.append("text")
+        .attr("x", 87 )
+        .attr("y", 170)
+        .style("text-anchor", "middle")
+        .text("Age");
+    nbasvg.append("text")
+        .attr("x", 5 )
+        .attr("y", 20)
+        .attr("id","title")
+        .style("text-anchor", "left")
+        .text("NBA");
+    
+//generate rects, axes, labels, and titles for MLB   
+    mlbsvg.selectAll("rect")
+        .data(mlbdataset)
+        .enter()
+        .append("rect")
+        .attr("x",function(d){return xScale(d.age);})
+        .attr("y",function(d){return (h-padding)-22 - yScale(d.value);})
+        .attr("width",(w)/mlbdataset.length)
+        .attr("height",function(d){return yScale(d.value);})
+        .attr("fill","rgb(96,185,101)");
+
+    mlbsvg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + (h-padding-22) + ")")
+        .call(xAxis);
+    mlbsvg.append("text")
+        .attr("x", 87 )
+        .attr("y", 170)
+        .style("text-anchor", "middle")
+        .text("Age");
+    mlbsvg.append("text")
+        .attr("x", 5 )
+        .attr("y", 20)
+        .attr("id","title")
+        .style("text-anchor", "left")
+        .text("MLB");
+    
+//generate rects, axes, labels, and titles for NHL  
+    nhlsvg.selectAll("rect")
+        .data(nhldataset)
+        .enter()
+        .append("rect")
+        .attr("x",function(d){return xScale(d.age);})
+        .attr("y",function(d){return (h-padding)-22 - yScale(d.value);})
+        .attr("width",(w)/nhldataset.length)
+        .attr("height",function(d){return yScale(d.value);})
+        .attr("fill","rgb(178,123,179)");
+    
+    nhlsvg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + (h-padding-22) + ")")
+        .call(xAxis);
+    nhlsvg.append("text")
+        .attr("x", 87 )
+        .attr("y", 170)
+        .style("text-anchor", "middle")
+        .text("Age")
+    nhlsvg.append("text")
+        .attr("x", 5 )
+        .attr("y", 20)
+        .attr("id","title")
+        .style("text-anchor", "left")
+        .text("NHL");
+
+//percentage calculator which runs on form submission
+    
+var future = new Date("2050-01-01");
+    
+function record (form) {
+    var nflpercent = 0;
+    var nbapercent = 0;
+    var mlbpercent = 0;
+    var nhlpercent = 0;
+    var birthdate = new Date(form.inputbox.value);
+    var gap = (future - birthdate)/86400000;
+
+//loops through birthday datasets, increments how many players are older than submitted birthdate
+    for(var i = 0; i <nfl.length; i++){
+    if(nfl[i].day<gap){nflpercent +=1;};
+    nflprint = Math.round(((nflpercent/nfl.length)*100)*10)/10; };
+        
+    for(var i = 0; i <nba.length; i++){
+    if(nba[i].day<gap){nbapercent +=1;};
+    nbaprint = Math.round(((nbapercent/nba.length)*100)*10)/10;};
+        
+    for(var i = 0; i <mlb.length; i++){
+    if(mlb[i].day<gap){mlbpercent +=1;};
+    mlbprint = Math.round(((mlbpercent/mlb.length)*100)*10)/10;};
+        
+    for(var i = 0; i <nhl.length; i++){
+    if(nhl[i].day<gap){nhlpercent +=1;};
+    nhlprint = Math.round(((nhlpercent/nhl.length)*100)*10)/10;};
+
+//maps calculated percentages to HTML
+document.getElementById("nflpercent").innerHTML = "<strong>"+nflprint+"</strong>";
+document.getElementById("nbapercent").innerHTML = "<strong>"+nbaprint+"</strong>";
+document.getElementById("mlbpercent").innerHTML = "<strong>"+mlbprint+"</strong>";
+document.getElementById("nhlpercent").innerHTML = "<strong>"+nhlprint+"</strong>";
+
+//converts submitted birthdate to age, from http://jsfiddle.net/codovations/n33RJ/
+var today = new Date();
+var trueage = today.getFullYear() - birthdate.getFullYear();
+var m = today.getMonth() - birthdate.getMonth();
+if (m < 0 || (m === 0 && today.getDate() < birthdate.getDate())) {trueage--;};
+
+//greys out portions of four histrograms based on submitted age
+nflsvg.selectAll("rect")
+        .transition()
+        .duration(1000)
+        .attr("fill",function(d){
+        if(d.age>=trueage){return "rgb(206,206,206)"}
+        else{return "rgb(245,94,80)"};
+    });
+    
+nbasvg.selectAll("rect")
+        .transition()
+        .duration(1000)
+        .attr("fill",function(d){
+        if(d.age>=trueage){return "rgb(206,206,206)"}
+        else{return "rgb(82,167,220)"};
+    });
+
+mlbsvg.selectAll("rect")
+        .transition()
+        .duration(1000)
+        .attr("fill",function(d){
+        if(d.age>=trueage){return "rgb(206,206,206)"}
+        else{return "rgb(96,185,101)"};
+    });
+    
+nhlsvg.selectAll("rect")
+        .transition()
+        .duration(1000)
+        .attr("fill",function(d){
+        if(d.age>=trueage){return "rgb(206,206,206)"}
+        else{return "rgb(178,123,179)"};
+    });
+};
+   
+</script>
+</body>
+</html>
