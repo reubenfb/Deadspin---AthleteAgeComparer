@@ -75,3 +75,7 @@ button{position:absolute;top: 3px;left: 205px;}
     color: rgb(255,90,0);
     font-family: "ProximaNovaCondBold";
 }
+
+div.ui-datepicker{
+ font-size:10px;
+}

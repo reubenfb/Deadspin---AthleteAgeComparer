@@ -3,8 +3,12 @@
 <head>
     <meta charset="utf-8">
     <title>Athlete Ages - Deadspin</title>
-    <script type="text/javascript" src="d3/d3.js"></script>
+    <script type="text/javascript" src="d3/d3.min.js"></script>
+    <script type="text/javascript" src="modernizr.custom.82021.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script type="text/javascript" src="jquery-ui-1.10.4.custom.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="picker_css/smoothness/jquery-ui-1.10.4.custom.css">
 </head>
     
 <body>
@@ -13,9 +17,9 @@
 <div id="intro"><span id="introtext">Enter your birthday:</span></div>
 <div id="calculator">
     <form>
-        <input type="date" name="inputbox" value="1985-01-01" >
+        <input type="date" name="inputbox" id="datepicker" value="1985-01-01" >
         <button type="button" onClick="record(this.form)">Submit</button>
-    </form>  
+    </form> 
     <p>You are older than:</p>
         <ul>
             <li><span id='nflpercent'>*</span> percent of NFL players</li>
@@ -24,7 +28,15 @@
             <li><span id='mlbpercent'>*</span> percent of MLB players</li>
         </ul>     
 </div>
-    
+<script>
+ if(!Modernizr.inputtypes.date) {
+    $("#datepicker")
+    .val("01/01/1985")
+    .datepicker({
+        format: 'mm/dd/yyyy'
+    })
+}
+</script>    
 <script type="text/javascript">
 
 //data values for histograms
